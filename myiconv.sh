@@ -17,9 +17,11 @@ foreachd()
 		elif [ -f "$file" ]
 		then
 			#过滤掉一些不需要转换的文件
-			want_file="`echo $file | sed -n \"/.*\.\(tar\|gz\|z\|bz2\|gzip\|so\|o\|a\)$/p\"`"
-			echo $want_file
-			if [ -z  $want_file ] && [ ! -x $file ]
+			#want_file="`echo $file | sed -n \"/.*\.\(tar\|gz\|z\|bz2\|gzip\|so\|o\|a\|pdf\|lo\|sln\)$/p\"`"
+			#只对源文件进行修改
+			want_file="`echo $file | sed -n \"/.*\.\(c\|cc\|cpp\|h\|cxx\)$/p\"`"
+			#echo $want_file
+			if [ $want_file ]
 			then
 				echo "转换$file"
 				iconv -f $source_type -t $dest_type $file -o $file.b
@@ -66,7 +68,7 @@ else
 	echo -e "目录或文件路径为空"
 fi
 
-echo "$source_type$dest_type$path"
+#echo "$source_type$dest_type$path"
 path="`echo $path | sed -e \"s/\(.*\)\/$/\1/\"`"  #去掉路径最后的/
 echo $path
 foreachd $path
