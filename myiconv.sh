@@ -16,14 +16,20 @@ foreachd()
 			foreachd "$file"
 		elif [ -f "$file" ]
 		then
-			echo "转换$file"
-			iconv -f $source_type -t $dest_type $file -o $file.b
-			if [ $? -eq 0 ]
+			#过滤掉一些不需要转换的文件
+			want_file="`echo $file | sed -n \"/.*\.\(tar\|gz\|z\|bz2\|gzip\|so\|o\|a\)$/p\"`"
+			echo $want_file
+			if [ -z  $want_file ] && [ ! -x $file ]
 			then
-				rm "$file"
-				mv "$file.b" "$file"
-			else
-				echo "$file转换失败"
+				echo "转换$file"
+				iconv -f $source_type -t $dest_type $file -o $file.b
+				if [ $? -eq 0 ]
+				then
+					rm "$file"
+					mv "$file.b" "$file"
+				else
+					echo "$file转换失败"
+				fi
 			fi
 		fi
 	done
